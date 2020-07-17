@@ -1,0 +1,47 @@
+[
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/main.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/main.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/main.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/Creator/TrackedVehicleCreator.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/Creator/TrackedVehicleCreator.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/Creator/TrackedVehicleCreator.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/Creator/TrackedVehicleCreatorExportData.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/Creator/TrackedVehicleCreatorExportData.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/Creator/TrackedVehicleCreatorExportData.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/Creator/TrackedVehicleCreatorForces.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/Creator/TrackedVehicleCreatorForces.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/Creator/TrackedVehicleCreatorForces.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/Simulator/TrackedVehicleSimulator.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/Simulator/TrackedVehicleSimulator.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/Simulator/TrackedVehicleSimulator.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/Simulator/TrackedVehicleVisualSimulator.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/Simulator/TrackedVehicleVisualSimulator.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/Simulator/TrackedVehicleVisualSimulator.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/Simulator/TrackedVehicleNonvisualSimulator.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/Simulator/TrackedVehicleNonvisualSimulator.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/Simulator/TrackedVehicleNonvisualSimulator.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/CSV/CSVReader.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/CSV/CSVReader.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/CSV/CSVReader.cpp"
+},
+{
+  "directory": "/home/killiad/ChronoWorkspace/Running_Gear/build",
+  "command": "/usr/bin/c++  -DCHRONO_DATA_DIR=\\\"/home/killiad/ChronoWorkspace/chrono/data/\\\" -I/home/killiad/ChronoWorkspace/chrono/src -I/home/killiad/ChronoWorkspace/chrono/src/chrono -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/bullet -I/home/killiad/ChronoWorkspace/chrono/src/chrono/collision/gimpact -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACD -I/home/killiad/ChronoWorkspace/chrono/src/chrono_thirdparty/HACDv2 -I/home/killiad/ChronoWorkspace/chrono_build -I/usr/local/include/eigen3 -I/home/killiad/Libraries/irrlicht-1.8.4/include     -std=c++14 -pthread -fopenmp  -march=native -msse4.2 -mfpmath=sse  -march=native -mavx2  -march=native -mfma    -o CMakeFiles/myexe.dir/CSV/CSVMaker.cpp.o -c /home/killiad/ChronoWorkspace/Running_Gear/CSV/CSVMaker.cpp",
+  "file": "/home/killiad/ChronoWorkspace/Running_Gear/CSV/CSVMaker.cpp"
+}
+]
