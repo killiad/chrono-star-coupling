@@ -5,7 +5,6 @@ namespace chrono{
 CSVReader::CSVReader(const std::string filename) {
     Open(filename);
     processed = new size_t(0);
-    std::getline(input, row);
 }
 
 CSVReader::~CSVReader(){
@@ -21,20 +20,39 @@ void CSVReader::GetLine(){
 }
 
 bool CSVReader::IsValidRow(){
-    return isdigit(row[0]);
+    return row != "EOF" && row != "";
 }
 
 double CSVReader::GetNumber(){
     double data;
-    
     if(cursor == row.size() + 1){
         GetLine();
     }
-
+    if(!IsValidRow()){
+        return -1;
+    }
+    
     data = std::stod(&row[cursor], processed);
     cursor += *processed + 1;
 
     return data;
+}
+
+std::string CSVReader::GetString(){
+    std::string cell = "";
+    if(cursor == row.size() + 1){
+        GetLine();
+    }
+
+    char letter = row.at(cursor);
+    ++cursor;
+    while(letter != ',' && letter != '\n'){
+        cell.push_back(letter);
+        letter = row.at(cursor);
+        ++cursor;
+    }
+
+    return cell;
 }
 
 bool CSVReader::Open(const std::string filename){
@@ -46,6 +64,7 @@ bool CSVReader::Open(const std::string filename){
     input.open(filename, std::ios::in);
     if(input.is_open()){
         GetLine();
+        cursor = 0;
         return true;
     }
     
@@ -65,6 +84,14 @@ ChVector<> CSVReader::GetVector(){
     double y = GetNumber();
     double z = GetNumber();
     return ChVector<>(x,y,z);
+}
+
+ChQuaternion<> CSVReader::GetQuaternion(){
+    double a = GetNumber();
+    double b = GetNumber();
+    double c = GetNumber();
+    double d = GetNumber();
+    return ChQuaternion<>(a,b,c,d);
 }
 
 }

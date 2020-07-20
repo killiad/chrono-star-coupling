@@ -7,6 +7,7 @@ TrackedVehicleNonVisualSimulator::TrackedVehicleNonVisualSimulator(std::shared_p
 
 void TrackedVehicleNonVisualSimulator::InitializeSimulation(const std::string& driver_file) {
 
+    time_passed = vehicle->GetSystem()->GetChTime();
     driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
     driver->Initialize();
 
@@ -67,14 +68,14 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
     if(terrain_exists){
         terrain->Synchronize(time_passed);
     }
-    
+   
     // Advance simulation for one timestep for all modules
     driver->Advance(step_size);
     vehicle->Advance(step_size);
     if(terrain_exists){
         terrain->Advance(step_size);
     }
-
+ 
     //outpit render data
     if(run_postprocesser && model_initialized){
         if(frameCount % 33 == 0){
@@ -99,7 +100,7 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
 
     //Output save data
     if(frameCount % save_interval == 0 && model_initialized){
-        SaveData();
+        vehicleCreator->SaveData(prefix, time_passed);
     }
 
     std::cout << "Sim frame:      " << frameCount << std::endl;
@@ -120,10 +121,13 @@ void TrackedVehicleNonVisualSimulator::RunSimulation(const std::string& driver_f
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!model_initialized){
+    if(GetTime() == 0.0 && !model_initialized ){
         InitializeModel();
         driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
         driver->Initialize();
+    }
+    else{
+        model_initialized = true;
     }
 
     while (time_passed < tend) {
@@ -143,7 +147,7 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!model_initialized){
+    if(GetTime() == 0.0 && !model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
         driver->Initialize();

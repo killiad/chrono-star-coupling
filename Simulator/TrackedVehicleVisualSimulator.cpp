@@ -146,7 +146,7 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
     }
 
     if(frameCount % save_interval == 0 && model_initialized){
-        SaveData();
+        vehicleCreator->SaveData(prefix, time_passed);
     }
 
     // Spin in place for real time to catch up
@@ -159,7 +159,7 @@ void TrackedVehicleVisualSimulator::RunSimulation(const std::string& driver_file
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!model_initialized){
+    if(!GetTime() == 0.0 && model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChIrrGuiDriver>(*app);
         double render_step_size = 1.0 / 50;
@@ -194,8 +194,19 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!model_initialized){
+    if(!GetTime() == 0.0 && model_initialized){
         InitializeModel();
+        driver = chrono_types::make_shared<ChIrrGuiDriver>(*app);
+        double render_step_size = 1.0 / 50;
+        double steering_time = 0.5;  // time to go from 0 to +1 (or from 0 to -1)
+        double throttle_time = 1.0;  // time to go from 0 to +1
+        double braking_time = 0.3;   // time to go from 0 to +1
+        driver->SetSteeringDelta(render_step_size / steering_time);
+        driver->SetThrottleDelta(render_step_size / throttle_time);
+        driver->SetBrakingDelta(render_step_size / braking_time);
+        driver->SetInputDataFile(vehicle::GetDataFile(driver_file));
+        driver->SetInputMode(driver->InputMode::DATAFILE);
+        driver->Initialize();
     }
     
     DoStep(vec);

@@ -14,6 +14,7 @@
 #include "chrono_thirdparty/filesystem/path.h"
 
 #include "../CSV/CSVMaker.h"
+#include "../CSV/CSVReader.h"
 
 
 namespace chrono{
@@ -54,6 +55,13 @@ class TrackedVehicleCreator {
 
         //Same as above, but uses individual position and orientation data instead of just a coordinate system
         void Initialize(const ChVector<> position, const ChQuaternion<> orientation, const double chassisFwdVel = 0.0);
+
+        //This function will save data in CSV format to be read by the TrackedVehicleCreator's constructor
+        //if one wishes to stop the simulation then start again later.
+        void SaveData(std::string prefix, double time_passed) const;
+
+        //Called after calling the constructor that loads saved data ONLY
+        void LoadData();
 
 		//Set the powertrain. InputL JSON file
 		void SetPowertrain(const std::string& filename);
@@ -115,8 +123,18 @@ class TrackedVehicleCreator {
         std::string master_file;
 
         std::string powertrain_file;
+        
+        std::string saveFile;
+
+        ChVector<> init_pos;
+
+        ChQuaternion<> init_rot;
+
+        double init_Chassis_FwdVel;
 
         bool DOF[6];
+
+        bool initialized;
 
         bool powertrain;
 
@@ -125,6 +143,8 @@ class TrackedVehicleCreator {
         VehicleInfo info;
 
         std::shared_ptr<ChLinkMateFix> restricter_link;
+
+        std::shared_ptr<ChBodyEasySphere> ball;
 };
 
 }//end of vehicle

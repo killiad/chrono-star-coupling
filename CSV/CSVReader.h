@@ -2,7 +2,7 @@
 #define CSVREADER_H
 
 #include "chrono/core/ChVector.h"
-#include "chrono/core/ChStream.h"
+#include "chrono/core/ChQuaternion.h"
 
 #include <cstdio>
 #include <fstream>
@@ -37,9 +37,16 @@ class CSVReader{
         //Assumes ValidInput() = true
         double GetNumber();
 
+        //Returns the cell in string format, then moves the cursor to the next cell of data
+        std::string GetString();
+
         //Gets the next three numbers, then returns them as a vector. Note that this fuction
         //assumes that the next three cells are numerical
         ChVector<> GetVector();
+
+        //Gets the next four numbers, then returns them as a quaternion. Note that this function
+        //assumes that the next four cells are numerical
+        ChQuaternion<> GetQuaternion();
 
         //opens the passed in file
         bool Open(const std::string filename);

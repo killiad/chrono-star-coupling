@@ -8,7 +8,7 @@ TrackedVehicleSimulator::TrackedVehicleSimulator(std::shared_ptr<TrackedVehicleC
     vehicleCreator(userVehicle), vehicle(userVehicle->GetVehicle()), tend(10.0), 
     step_size(4e-3), makeCSV(false), run_postprocesser(false), pov_exporter(vehicle->GetSystem()), 
     time_passed(0.0), terrain_exists(false), renderCount(1), sim_initialized(false), model_initialized(false),
-    save_interval(-1), prefix(""){}
+    save_interval(-1), prefix(""), frameCount(0){}
 
 void TrackedVehicleSimulator::SetTerrain(const std::string& filename, Terrain type){
 
@@ -152,112 +152,6 @@ void TrackedVehicleSimulator::InitializeModel(){
     frameCount = 0;
     model_initialized = true;
     std::cout << "INITIALIZION COMPLETE" << std::endl;
-}
-
-
-void TrackedVehicleSimulator::SaveData() const {
-
-    char filename [100];
-    
-    sprintf(filename, "../Outputs/Saves/%s_%.3f.csv", prefix.c_str(), time_passed);
-    std::string fn(filename);
-    bool *dof = vehicleCreator->GetDOF();
-    auto body = chrono_types::make_shared<ChBody>();
-    CSVMaker csv(fn);
-    csv.Clear();
-
-    //First row contains file name, powertrain file, constact method, time, degrees of freedom, vehicle position, 
-    //vehicle orientation, and vehicle speed
-    csv.Add(vehicleCreator->GetMasterFile());
-    csv.AddComma();
-    csv.Add(vehicleCreator->GetPowertrainFile());
-    csv.AddComma();
-    if(vehicle->GetSystem()->GetContactMethod() == ChContactMethod::NSC){
-        csv.Add("NSC");
-    }
-    else{
-        csv.Add("SMC");
-    }
-    csv.AddComma();
-    csv.Add(time_passed);
-    csv.AddComma();
-    for(int degree = 0; degree < 6; ++degree){
-        csv.Add(dof[degree]);
-        csv.AddComma();
-    }
-    csv.AddVector(vehicle->GetVehiclePos());
-    csv.AddComma();
-    csv.AddQuaternion(vehicle->GetVehicleRot());
-    csv.AddComma();
-    csv.Add(vehicle->GetChassisBody()->GetPos_dt().x());
-    csv.NewLine();
-
-    //All other rows contain general ID, specific ID, part: position, orientaion, velocity, angular velocity,
-    //acceleration, angular acceleration, force, and torque (gyro torqye?)
-
-    //Chassis
-    body = vehicle->GetChassisBody();
-    csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::CHASSIS), 0);
-    csv.NewLine();
-    
-    //Track Shoes
-    for(int spec_id = 0; spec_id < vehicleCreator->GetVehicleInfo().Left_TrackShoeNum; ++spec_id){
-        body = vehicle->GetTrackShoe(LEFT, spec_id)->GetShoeBody();
-        csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::TRACKSHOE_LEFT), spec_id);
-        csv.NewLine();
-    }
-    
-    for(int spec_id = 0; spec_id < vehicleCreator->GetVehicleInfo().Right_TrackShoeNum; ++spec_id){
-        body = vehicle->GetTrackShoe(RIGHT, spec_id)->GetShoeBody();
-        csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::TRACKSHOE_RIGHT), spec_id);
-        csv.NewLine();
-    }
-
-    //Sprockets
-    body = vehicle->GetTrackAssembly(LEFT)->GetSprocket()->GetGearBody();
-    csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::SPROCKET_LEFT), 0);
-    csv.NewLine();
-
-    body = vehicle->GetTrackAssembly(RIGHT)->GetSprocket()->GetGearBody();
-    csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::SPROCKET_RIGHT), 0);
-    csv.NewLine();
-   
-    //Idlers
-    body = vehicle->GetTrackAssembly(LEFT)->GetIdler()->GetWheelBody();
-    csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::IDLER_LEFT), 0);
-    csv.NewLine();
-
-    body = vehicle->GetTrackAssembly(RIGHT)->GetIdler()->GetWheelBody();
-    csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::IDLER_RIGHT), 0);
-    csv.NewLine();
-
-    //Rollers
-    for(int spec_id = 0; spec_id < vehicleCreator->GetVehicleInfo().Left_RollerNum; ++spec_id){
-        body = vehicle->GetTrackAssembly(LEFT)->GetRoller(spec_id)->GetBody();
-        csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::ROLLER_LEFT), spec_id);
-        csv.NewLine();
-    }
-    
-    for(int spec_id = 0; spec_id < vehicleCreator->GetVehicleInfo().Right_RollerNum; ++spec_id){
-        body = vehicle->GetTrackAssembly(RIGHT)->GetRoller(spec_id)->GetBody();
-        csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::ROLLER_RIGHT), spec_id);
-        csv.NewLine();
-    }
-
-    //Road Wheels
-    for(int spec_id = 0; spec_id < vehicleCreator->GetVehicleInfo().Left_RoadWheelNum; ++spec_id){
-        body = vehicle->GetTrackAssembly(LEFT)->GetRoadWheel(spec_id)->GetWheelBody();
-        csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::ROADWHEEL_LEFT), spec_id);
-        csv.NewLine();
-    }
-    
-    for(int spec_id = 0; spec_id < vehicleCreator->GetVehicleInfo().Right_RoadWheelNum; ++spec_id){
-        body = vehicle->GetTrackAssembly(RIGHT)->GetRoadWheel(spec_id)->GetWheelBody();
-        csv.SaveBodyData(body, vehicleCreator->Part_to_ID(Parts::ROADWHEEL_RIGHT), spec_id);
-        csv.NewLine();
-    }
-
-    std::cout << "Saved data to " << fn << std::endl; 
 }
 
 } //end namespace vehicle 

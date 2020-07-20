@@ -14,7 +14,9 @@ int main(int argc, char* argv[]) {
 	// JSON files for terrain (rigid plane)
 	std::string rigidterrain_file("terrain/RigidPlane.json");
 	// Driver input file (if not using Irrlicht)
-	std::string driver_file("generic/driver/Sample_Maneuver.txt");
+	std::string driver_file("generic/driver/No_Maneuver.txt");
+    // Saved file for starting a simulation from where it left off
+    std::string save_file("../Outputs/Saves/test_0.020.csv");
 
 	//Vector that stores what type of data will be outputed
 	std::vector<Parts> data;
@@ -31,16 +33,18 @@ int main(int argc, char* argv[]) {
     data.push_back(Parts::ROADWHEEL_RIGHT);
 
     //Initializing Vehicle Creator and Simulator
-	auto runningGear = chrono_types::make_shared<TrackedVehicleCreator>(vehicle_file, ChContactMethod::NSC);
+	//auto runningGear = chrono_types::make_shared<TrackedVehicleCreator>(vehicle_file, ChContactMethod::NSC);
+    auto runningGear = chrono_types::make_shared<TrackedVehicleCreator>(save_file);
+    runningGear->LoadData();
     ChVector<> chassisPos(0,0,1.2);
     ChQuaternion<> chassisOrientation = QUNIT; 
     runningGear->Initialize(chassisPos, chassisOrientation, 0.0);
     std::shared_ptr<TrackedVehicleSimulator> simulator = chrono_types::make_shared<TrackedVehicleNonVisualSimulator>(runningGear);
-	
+
 	runningGear->SetPowertrain(simplepowertrain_file);
 	runningGear->RestrictDOF(true, true, true, true, true, true);
 	
-	//simulator->SetTerrain(rigidterrain_file, Terrain::RIGID);
+    //simulator->SetTerrain(rigidterrain_file, Terrain::RIGID);
 	simulator->SetSolver();
 	simulator->SetSimulationLength(4.0);
 	simulator->SetTimeStep(4e-3);

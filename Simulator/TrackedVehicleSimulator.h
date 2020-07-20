@@ -68,10 +68,6 @@ class TrackedVehicleSimulator {
         //INPUT: After how many frames the user wants to save the simulation and the prefix for the save file names
         //This will set how often the simulation will save
         void SetSaveProperties(int interval, std::string file_prefix = "saved_data");
-
-        //This function will save data in CSV format to be read by the TrackedVehicleCreator's constructor
-        //if one wishes to stop the simulation then start again later.
-        void SaveData() const;
 		
         //This function will run a couple time steps with a fixed vehicle to ensure everything is properly initialized
         //before the actual simulation is ran.
