@@ -61,7 +61,7 @@ project(my_project)
 
 LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}/../Chrono/lib")
 find_package(Chrono
-             COMPONENTS Irrlicht Vehicle Postprocess
+             COMPONENTS Irrlicht Vehicle Parallel
              CONFIG)
 
 #--------------------------------------------------------------

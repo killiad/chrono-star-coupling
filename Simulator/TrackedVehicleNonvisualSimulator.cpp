@@ -39,10 +39,6 @@ void TrackedVehicleNonVisualSimulator::InitializeSimulation(const std::string& d
         return;
     }
 
-    //Set up post processing
-    if(run_postprocesser){
-        InitializePostProcess();
-    }
     sim_initialized = true;
 }
 
@@ -75,19 +71,8 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
     if(terrain_exists){
         terrain->Advance(step_size);
     }
+    vehicle->GetSystem()->DoStepDynamics(step_size);
  
-    //outpit render data
-    if(run_postprocesser && model_initialized){
-        if(frameCount % 33 == 0){
-            std::cout << "Exporting POVRAY Data" <<std::endl;
-            pov_exporter.ExportData();
-            sprintf(filename, "%s/data_%.3d.dat", pov_dir.c_str(), renderCount);
-            std::string fn(filename);
-            utils::WriteShapesPovray(vehicle->GetSystem(), fn);
-            ++renderCount;
-        }
-    }
-
     // Output data for STAR-CCM+
     if(makeCSV && model_initialized){
         sprintf(filename, "%s/chrono_to_star_%.3f.csv", csv_dir.c_str(), time_passed);
@@ -96,11 +81,6 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
     }
     else{
         vehicleCreator->ExportData(parts_list);
-    }
-
-    //Output save data
-    if(frameCount % save_interval == 0 && model_initialized){
-        vehicleCreator->SaveData(prefix, time_passed);
     }
 
     std::cout << "Sim frame:      " << frameCount << std::endl;

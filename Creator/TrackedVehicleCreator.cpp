@@ -1,10 +1,13 @@
 #include "TrackedVehicleCreator.h"
+#include "chrono_parallel/physics/Ch3DOFContainer.h"
+#include "core/ChTypes.h"
+#include "physics/ChMaterialSurface.h"
 
 namespace chrono{
 namespace vehicle{
 
-TrackedVehicleCreator::TrackedVehicleCreator(const std::string& filename, ChContactMethod method) : master_file(filename),
-    powertrain_file(""), powertrain(false), restricted(false){
+TrackedVehicleCreator::TrackedVehicleCreator(const std::string& filename, ChContactMethod method, bool parallel) : master_file(filename),
+    powertrain_file(""), powertrain(false), restricted(false), is_parallel(parallel){
 
     //// NOTE
     //// When using SMC, a double-pin shoe type requires MKL or MUMPS.  
@@ -14,8 +17,28 @@ TrackedVehicleCreator::TrackedVehicleCreator(const std::string& filename, ChCont
     //// For now, use ChContactMethod::NSC for a double-pin track model
 
     // Create the vehicle system
-    //TrackedVehicle veh(vehicle::GetDataFile(filename), contact_method);
-    vehicle = chrono_types::make_shared<TrackedVehicle>(vehicle::GetDataFile(filename), method);
+    ChSystem* system;
+    switch(method){
+        
+        case ChContactMethod::NSC:
+            if(parallel){
+                system = new ChSystemParallelNSC();   
+            }
+            else{
+                system = new ChSystemNSC();
+            }
+            break;
+        
+        case ChContactMethod::SMC:
+            if(parallel){
+                system = new ChSystemParallelSMC();   
+            }
+            else{
+                system = new ChSystemSMC();
+            }
+            break;
+    }
+    vehicle = chrono_types::make_shared<TrackedVehicle>(system, vehicle::GetDataFile(filename));
     for(int i = 0; i < 6; ++i){
         DOF[i] = false;
     }
@@ -35,7 +58,7 @@ TrackedVehicleCreator::TrackedVehicleCreator(const std::string& filename, ChCont
     info.Mass = vehicle->GetVehicleMass();
 }
 
-TrackedVehicleCreator::TrackedVehicleCreator(std::string save_file){
+/*TrackedVehicleCreator::TrackedVehicleCreator(std::string save_file){
     CSVReader csv(save_file);
     saveFile = save_file;
         
@@ -44,7 +67,7 @@ TrackedVehicleCreator::TrackedVehicleCreator(std::string save_file){
     powertrain_file = csv.GetString();
     ChContactMethod method;
     if(csv.GetString() == "NSC"){
-        method = ChContactMethod::NSC;
+       method = ChContactMethod::NSC;
     }
     else{
         method = ChContactMethod::SMC;
@@ -72,9 +95,87 @@ TrackedVehicleCreator::TrackedVehicleCreator(std::string save_file){
     info.Left_RoadWheelNum = left_assembly->GetNumRoadWheelAssemblies();
     info.Right_RoadWheelNum = right_assembly->GetNumRoadWheelAssemblies();
     info.Mass = vehicle->GetVehicleMass();
+}*/
+
+void TrackedVehicleCreator::SetSolver(int threads) {
+
+    auto method = vehicle->GetSystem()->GetContactMethod();
+    int max_iteration_bilateral = 1000;  // 1000;
+    int max_iteration_normal = 0;
+    int max_iteration_sliding = 200;  // 2000;
+    int max_iteration_spinning = 0;
+    float contact_recovery_speed = -1;
+    double tolerance = 0.01;
+    double r_g = 0.02;
+
+    // Perform dynamic tuning of number of threads?
+    bool thread_tuning = false;
+    
+    if(is_parallel){
+        ChSystemParallel *casted_system = dynamic_cast<ChSystemParallel*>(vehicle->GetSystem());
+        // Set number of threads
+        int max_threads = CHOMPfunctions::GetNumProcs();
+        if (threads > max_threads)
+            threads = max_threads;
+        CHOMPfunctions::SetNumThreads(threads);
+        std::cout << "Using " << threads << " threads" << std::endl;
+
+        casted_system->GetSettings()->perform_thread_tuning = thread_tuning;
+
+        // Set solver parameters
+        casted_system->GetSettings()->solver.max_iteration_bilateral = max_iteration_bilateral;
+        casted_system->GetSettings()->solver.use_full_inertia_tensor = false;
+        casted_system->GetSettings()->solver.tolerance = tolerance;
+
+        if(method == ChContactMethod::NSC){
+            casted_system->GetSettings()->solver.solver_mode = SolverMode::SLIDING;
+            casted_system->GetSettings()->solver.max_iteration_normal = max_iteration_normal;
+            casted_system->GetSettings()->solver.max_iteration_sliding = max_iteration_sliding;
+            casted_system->GetSettings()->solver.max_iteration_spinning = max_iteration_spinning;
+            casted_system->GetSettings()->solver.alpha = 0;
+            casted_system->GetSettings()->solver.contact_recovery_speed = contact_recovery_speed;
+            dynamic_cast<ChSystemParallelNSC*>(casted_system)->ChangeSolverType(SolverType::APGD);
+            casted_system->GetSettings()->collision.collision_envelope = 0.1 * r_g;
+        }
+        else{
+            casted_system->GetSettings()->solver.contact_force_model = ChSystemSMC::PlainCoulomb;
+        }
+        casted_system->GetSettings()->collision.bins_per_axis = vec3(10, 10, 10);
+    }
+    else {
+        vehicle->GetSystem()->SetSolverMaxIterations(50);
+    }
+
+    /*switch(type){
+    
+        case ChContactMethod::NSC:
+            if(is_parallel){
+                solver = chrono_types::make_shared<ChIterativeSolverParallelNSC>();
+            }
+            else{
+                solver = chrono_types::make_shared<ChSolverPSOR>();
+            }
+            break;
+        
+        case ChContactMethod::SMC:
+            if(is_parallel){
+                solver = chrono_types::make_shared<ChIterativeSolverParallelSMC>();
+            }
+            else{
+                solver = chrono_types::make_shared<ChSolverPSOR>();
+            }
+            break;
+
+        default:
+            std::cout << "Not a solver type!" << std::endl;
+            break;
+    }*/
+
+    vehicle->GetSystem()->SetMaxPenetrationRecoverySpeed(1.5);
+    vehicle->GetSystem()->SetMinBounceSpeed(2.0);
 }
 
-void TrackedVehicleCreator::SaveData(std::string prefix, double time_passed) const{
+/*void TrackedVehicleCreator::SaveData(std::string prefix, double time_passed) const{
 
     char filename [100];
     
@@ -213,7 +314,7 @@ void TrackedVehicleCreator::LoadData(){
 
     }
     csv.Close();
-}
+}*/
 
 void TrackedVehicleCreator::Initialize(const ChCoordsys<>& chassisPos, const double chassisFwdVel){
 

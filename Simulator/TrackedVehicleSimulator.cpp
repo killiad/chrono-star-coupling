@@ -1,14 +1,14 @@
 #include "TrackedVehicleSimulator.h"
+#include "core/ChTypes.h"
 
 namespace chrono{
 namespace vehicle{
 
 
 TrackedVehicleSimulator::TrackedVehicleSimulator(std::shared_ptr<TrackedVehicleCreator> userVehicle) : 
-    vehicleCreator(userVehicle), vehicle(userVehicle->GetVehicle()), tend(10.0), 
-    step_size(4e-3), makeCSV(false), run_postprocesser(false), pov_exporter(vehicle->GetSystem()), 
-    time_passed(0.0), terrain_exists(false), renderCount(1), sim_initialized(false), model_initialized(false),
-    save_interval(-1), prefix(""), frameCount(0){}
+    vehicleCreator(userVehicle), vehicle(userVehicle->GetVehicle()), tend(10.0), step_size(4e-3), 
+    makeCSV(false), time_passed(0.0), terrain_exists(false), sim_initialized(false), 
+    model_initialized(false), frameCount(0){}
 
 void TrackedVehicleSimulator::SetTerrain(const std::string& filename, Terrain type){
 
@@ -33,26 +33,15 @@ void TrackedVehicleSimulator::SetSimulationLength(double seconds){
     tend = seconds;
 }
 
-void TrackedVehicleSimulator::SetSaveProperties(int interval, std::string file_prefix){
+/*void TrackedVehicleSimulator::SetSaveProperties(int interval, std::string file_prefix){
     save_interval = interval;
     prefix = file_prefix;
     if(!filesystem::create_directory("../Outputs/Saves")){
         std::cout << "Error creating directory Outputs/Saves" << std::endl;
         return;
     }
-}
+}*/
 
-void TrackedVehicleSimulator::SetSolver() {
-
-	solver = chrono_types::make_shared<ChSolverPSOR>();
-    solver->SetMaxIterations(50);;
-    solver->SetOmega(0.8);
-    solver->SetSharpnessLambda(1.0);
-    vehicle->GetSystem()->SetSolver(solver);
-
-    vehicle->GetSystem()->SetMaxPenetrationRecoverySpeed(1.5);
-    vehicle->GetSystem()->SetMinBounceSpeed(2.0);
-}
 
 void TrackedVehicleSimulator::SetTimeStep(double step) {
 	step_size = step;
@@ -63,81 +52,13 @@ void TrackedVehicleSimulator::SetCSV(bool export_data) {
 	makeCSV = export_data;
 }
 
-//Set post processing
-void TrackedVehicleSimulator::SetPostProcess(bool process) {
-	run_postprocesser = process;
-}
-
-void TrackedVehicleSimulator::InitializePostProcess() {
-
-	pov_exporter = postprocess::ChPovRay(vehicle->GetSystem());
-
-	// Create (if needed) the output directory
-    const std::string dir = "../Outputs/POVRAY";
-    if (!filesystem::create_directory(filesystem::path(dir))) {
-        std::cout << "Error creating directory " << dir << std::endl;
-        return;
-    }
-
-    // Sets some file names for in-out processes.
-    pov_exporter.SetTemplateFile(GetChronoDataFile("_template_POV.pov"));
-    pov_exporter.SetOutputScriptFile(dir + "/rendering_frames.pov");
-    pov_exporter.SetOutputDataFilebase("my_state");
-    pov_exporter.SetPictureFilebase("picture");
-
-    // Even better: save the .dat files and the .bmp files in two subdirectories,
-    // to avoid cluttering the current directory.
-    const std::string out_dir = dir + "/output";
-    const std::string anim_dir = dir + "/anim";
-    filesystem::create_directory(filesystem::path(out_dir));
-    filesystem::create_directory(filesystem::path(anim_dir));
-
-    pov_exporter.SetOutputDataFilebase(out_dir + "/my_state");
-    pov_exporter.SetPictureFilebase(anim_dir + "/picture");
-
-    // --Optional: modify default light
-    pov_exporter.SetLight(ChVector<>(-3, 4, 2), ChColor(0.15f, 0.15f, 0.12f), false);
-
-    // --Optional: add further POV commands, for example in this case:
-    //     create an area light for soft shadows
-    //     create a Grid object; Grid() parameters: step, linewidth, linecolor, planecolor
-    //   Remember to use \ at the end of each line for a multiple-line string.
-    pov_exporter.SetCustomPOVcommandsScript(
-        " \
-    	light_source {   \
-    	<2, 10, -3>  \
-    	color rgb<1.2,1.2,1.2> \
-        area_light <4, 0, 0>, <0, 0, 4>, 8, 8 \
-        adaptive 1 \
-        jitter\
-        } \
-        object{ Grid(1,0.02, rgb<0.7,0.8,0.8>, rgbt<1,1,1,1>) rotate <0, 0, 90>  } \
-    ");
-
-    // --Optional: attach additional custom POV commands to some of the rigid bodies,
-    //   using the ChPovRayAssetCustom asset. This asset for example projects a
-    //   checkered texture to the floor. This POV specific asset won't be rendered
-    //   by Irrlicht or other interfaces.
-    auto mPOVcustom = chrono_types::make_shared<postprocess::ChPovRayAssetCustom>();
-    mPOVcustom->SetCommands((char*)"pigment { checker rgb<0.9,0.9,0.9>, rgb<0.75,0.8,0.8> }");
-
-    // IMPORTANT! Tell to the POVray exporter that
-    // he must take care of converting the shapes of
-    // all items!
-
-    pov_exporter.AddAll();
-    pov_exporter.ExportScript();
-}
-
 void TrackedVehicleSimulator::InitializeModel(){
     
     bool fixed = vehicle->GetChassis()->IsFixed();
     bool temp_csv = makeCSV;
-    bool temp_process = run_postprocesser;
 
     vehicle->GetChassis()->SetFixed(true);
     SetCSV(false);
-    SetPostProcess(false);
 
     while(time_passed < 0.02){
         std::cout << "INITIALIZING MODEL: NOT ACTUAL SIMULATION" << std::endl;
@@ -146,7 +67,6 @@ void TrackedVehicleSimulator::InitializeModel(){
     
     vehicle->GetChassis()->SetFixed(fixed);
     SetCSV(temp_csv);
-    SetPostProcess(temp_process);
     vehicle->GetSystem()->SetChTime(0.0);
     time_passed = vehicle->GetChTime();
     frameCount = 0;

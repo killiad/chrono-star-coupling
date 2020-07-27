@@ -1,14 +1,11 @@
 #ifndef TRACKED_VEHICLE_SIMULATOR_H
 #define TRACKED_VEHICLE_SIMULATOR_H
 
-#include "chrono_postprocess/ChPovRay.h"
-#include "chrono_postprocess/ChPovRayAssetCustom.h"
-#include "chrono/solver/ChSolverPSOR.h"
-#include "chrono/utils/ChUtilsInputOutput.h"
 #include "chrono_vehicle/driver/ChDataDriver.h"
 #include "chrono_vehicle/terrain/RigidTerrain.h"
 #include "chrono_vehicle/terrain/SCMDeformableTerrain.h"
 #include "chrono/core/ChRealtimeStep.h"
+#include "solver/ChIterativeSolverVI.h"
 
 #include "../Creator/TrackedVehicleCreator.h"
 #include "../CSV/CSVReader.h"
@@ -30,6 +27,8 @@ namespace vehicle{
 
 enum class Terrain { RIGID, SCM_DEFORMABLE };
 
+enum class SolverTypes { PSOR, PARALLEL_NCS, PARALLEL_SMC };
+
 class TrackedVehicleSimulator {
 
 	public:
@@ -39,9 +38,6 @@ class TrackedVehicleSimulator {
 		//modified since userVehicle is a shared pointer
 		TrackedVehicleSimulator(std::shared_ptr<TrackedVehicleCreator> userVehicle);
 
-		//Initialize the solver. Runs PSOR by default
-		void SetSolver();
-
 		//INPUT: time step of the simulation
 		//set the simulation time step
 		void SetTimeStep(double step);
@@ -49,13 +45,6 @@ class TrackedVehicleSimulator {
 		//INPUT: If you want the simulation to export csv files
 		//set true to export the csv files
 		void SetCSV(bool export_data);
-
-		//INPUT: if you want the simulation to export post processing data
-		//Set post processing
-		void SetPostProcess(bool process);
-
-		//If postprocessor is true, this function will initialize and set up post procesing
-		void InitializePostProcess();
 
 		//INPUT: file to generate terrain (JSON if Rigid, mesh if SCM_Deformable), terrain type based off enum above
 		//Sets a terrain
@@ -65,9 +54,9 @@ class TrackedVehicleSimulator {
 		//Sets how long the simulation will run, in seconds
 		void SetSimulationLength(double seconds);
 
-        //INPUT: After how many frames the user wants to save the simulation and the prefix for the save file names
+        /*//INPUT: After how many frames the user wants to save the simulation and the prefix for the save file names
         //This will set how often the simulation will save
-        void SetSaveProperties(int interval, std::string file_prefix = "saved_data");
+        void SetSaveProperties(int interval, std::string file_prefix = "saved_data");*/
 		
         //This function will run a couple time steps with a fixed vehicle to ensure everything is properly initialized
         //before the actual simulation is ran.
@@ -77,13 +66,6 @@ class TrackedVehicleSimulator {
 		//over in this simulation class.
 		inline std::shared_ptr<ChTerrain> GetTerrain() { return terrain; }
 	
-		//Returns the solver. This is a shared pointer, so edits made to the solver will carry
-		//over in this simulation class.
-		inline std::shared_ptr<ChSolverPSOR> GetSolver() { return solver; }
-
-		//Returns if simulation will post process
-		inline bool GetPostProcess() const { return run_postprocesser; }
-
 		//Returns length of the simulation
 		inline double GetSimulationLength() const { return tend; }
 
@@ -98,9 +80,6 @@ class TrackedVehicleSimulator {
 
 		//Returns how many simulation frames has passed
 		inline int getFrameCount() const { return frameCount; }
-
-		//Returns how many frames have been rendered for post processing
-		inline int getRenderCount() const {return renderCount; }
 
         //INPUT: file that contains information on steering, throttle, and breaking, and parts whose data
         //will be exported
@@ -131,9 +110,9 @@ class TrackedVehicleSimulator {
 
 		std::shared_ptr<ChTerrain> terrain;
 
-		std::shared_ptr<ChSolverPSOR> solver;
+		std::shared_ptr<ChIterativeSolverVI> solver;
 
-        std::string prefix;
+        //std::string prefix;
 
 		//length of simulation
 		double tend;
@@ -142,8 +121,6 @@ class TrackedVehicleSimulator {
 
 		double time_passed;
 		
-        bool run_postprocesser;
-
 		bool makeCSV;
 
         bool sim_initialized;
@@ -154,11 +131,7 @@ class TrackedVehicleSimulator {
 
 		int frameCount;
 
-		int renderCount;
-
-        int save_interval;
-
-		postprocess::ChPovRay pov_exporter;
+        //int save_interval;
 
 		BodyStates shoe_states_left;
 

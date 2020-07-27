@@ -70,11 +70,6 @@ void TrackedVehicleVisualSimulator::InitializeSimulation(const std::string& driv
     // Number of simulation steps between two 3D view render frames
     int render_steps = (int)std::ceil(render_step_size / step_size);
 
-    //Set up post processing
-    if(run_postprocesser){
-        InitializePostProcess();
-    }
-
     sim_initialized = true;
 }
 
@@ -127,6 +122,7 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
         terrain->Advance(step_size);
     }
     app->Advance(step_size);
+    vehicle->GetSystem()->DoStepDynamics(step_size);
 
     if(makeCSV && model_initialized){
         sprintf(filename, "%s/chrono_to_star_%.3f.csv", csv_dir.c_str(), time_passed);
@@ -135,18 +131,6 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
     }
     else {
         vehicleCreator->ExportData(parts_list);
-    }
-
-    if(run_postprocesser && model_initialized){
-        std::cout << "Exporting POVRAY Data" <<std::endl;
-        //pov_exporter.ExportData();
-        sprintf(filename, "%s/data_%.3f.dat", pov_dir.c_str(), time_passed);
-        std::string fn(filename);
-        utils::WriteShapesPovray(vehicle->GetSystem(), fn);
-    }
-
-    if(frameCount % save_interval == 0 && model_initialized){
-        vehicleCreator->SaveData(prefix, time_passed);
     }
 
     // Spin in place for real time to catch up
@@ -159,7 +143,7 @@ void TrackedVehicleVisualSimulator::RunSimulation(const std::string& driver_file
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!GetTime() == 0.0 && model_initialized){
+    if((!GetTime()) == 0.0 && model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChIrrGuiDriver>(*app);
         double render_step_size = 1.0 / 50;
@@ -194,7 +178,7 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!GetTime() == 0.0 && model_initialized){
+    if((!GetTime()) == 0.0 && model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChIrrGuiDriver>(*app);
         double render_step_size = 1.0 / 50;
