@@ -109,11 +109,14 @@ class TrackedVehicleCreator {
 
         //This function takes in a whole number double. It will return the corresponding part in enum form, performing
         //the necessary casts to do so. If id is not a valid part id, then function is undefined
-        Parts ID_To_Part(double id);
+        Parts ID_To_Part(double id) const;
 
         //Takes in a part and returns the ID. This function is necessary because Parts is a strongly typed enum, which does
         //not implicitely cast to an int. However, it will prevent naming clashes that may happen in the future otherwise.
-        int Part_to_ID(Parts part) const;
+        int Part_To_ID(Parts part) const;
+
+        //Used to get a pointer to the body for a given part. Takes in a part and a specific id
+        std::shared_ptr<ChBody> Part_To_Body(Parts part, int spec_id = 0) const;
 
 		inline std::shared_ptr<TrackedVehicle> GetVehicle() { return vehicle; }
 

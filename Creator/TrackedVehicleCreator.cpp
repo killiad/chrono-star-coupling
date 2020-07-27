@@ -397,13 +397,43 @@ void TrackedVehicleCreator::ExportComponentList(const std::string filename) cons
     vehicle->ExportComponentList(filename);
 }
 
-Parts TrackedVehicleCreator::ID_To_Part(double id){
+Parts TrackedVehicleCreator::ID_To_Part(double id) const {
     int integer_id = (int) id;
     auto part = static_cast<Parts>(integer_id);
     return part;
 }
 
-int TrackedVehicleCreator::Part_to_ID(Parts part) const {
+std::shared_ptr<ChBody> TrackedVehicleCreator::Part_To_Body(Parts part, int id) const {
+    switch(part){
+        case Parts::CHASSIS:
+            return vehicle->GetChassisBody();
+        case Parts::TRACKSHOE_LEFT:
+            return vehicle->GetTrackAssembly(LEFT)->GetTrackShoe(id)->GetShoeBody();
+        case Parts::TRACKSHOE_RIGHT:
+            return vehicle->GetTrackAssembly(RIGHT)->GetTrackShoe(id)->GetShoeBody();
+        case Parts::SPROCKET_LEFT:
+            return vehicle->GetTrackAssembly(LEFT)->GetSprocket()->GetGearBody();
+        case Parts::SPROCKET_RIGHT:
+            return vehicle->GetTrackAssembly(RIGHT)->GetSprocket()->GetGearBody();
+        case Parts::IDLER_LEFT:
+            return vehicle->GetTrackAssembly(LEFT)->GetIdler()->GetWheelBody();
+        case Parts::IDLER_RIGHT:
+            return vehicle->GetTrackAssembly(RIGHT)->GetIdler()->GetWheelBody();
+        case Parts::ROLLER_LEFT:
+            return vehicle->GetTrackAssembly(LEFT)->GetRoller(id)->GetBody();
+        case Parts::ROLLER_RIGHT:
+            return vehicle->GetTrackAssembly(RIGHT)->GetRoller(id)->GetBody();
+        case Parts::ROADWHEEL_LEFT:
+            return vehicle->GetTrackAssembly(LEFT)->GetRoadWheelAssembly(id)->GetWheelBody();
+        case Parts::ROADWHEEL_RIGHT:
+            return vehicle->GetTrackAssembly(RIGHT)->GetRoadWheelAssembly(id)->GetWheelBody();
+        default:
+            std::cout <<"Not a part!" << std::endl;
+            return chrono_types::make_shared<ChBody>();
+    }
+}
+
+int TrackedVehicleCreator::Part_To_ID(Parts part) const {
     switch(part){
         case Parts::CHASSIS:
             return 0;
