@@ -101,7 +101,7 @@ void TrackedVehicleNonVisualSimulator::RunSimulation(const std::string& driver_f
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(GetTime() == 0.0 && !model_initialized ){
+    if(!model_initialized ){
         InitializeModel();
         driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
         driver->Initialize();
@@ -127,7 +127,7 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(GetTime() == 0.0 && !model_initialized){
+    if(!model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
         driver->Initialize();
@@ -138,6 +138,7 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
         
         sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
         std::string data_file(filename);
+        std::cout << filename << std::endl;
         CSVReader reader(data_file);
         
         while(!reader.Open(filename)){
@@ -148,16 +149,21 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
             vehicleCreator->ClearAddedForces(part_body);
         }
 
-        reader.GetLine();
+        reader.GetLine(); 
         while(reader.IsValidRow()){
-            part = vehicleCreator->ID_To_Part(reader.GetNumber());
+            std::cout << reader.GetRow() << std::endl;
+            double id;
+            id = reader.GetNumber();
+            part = vehicleCreator->ID_To_Part(id);
             spec_id = reader.GetNumber();
             force = reader.GetVector();
             moment = reader.GetVector();
             vehicleCreator->AddForce(part, spec_id, force, time_passed);
             vehicleCreator->AddTorque(part, spec_id, moment, time_passed);
+            reader.GetLine();
         }
         DoStep(vec);
+        reader.Close();
     }
 }
 

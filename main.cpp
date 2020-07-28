@@ -39,13 +39,13 @@ int main(int argc, char* argv[]) {
     
 	runningGear->SetPowertrain(simplepowertrain_file);
     runningGear->SetSolver(2);
-	runningGear->RestrictDOF(true, true, true, true, true, true);
-	
+	runningGear->RestrictDOF(true, true, true, true, false, true);
+    std::cout << "Mass: " << runningGear->GetVehicleInfo().Mass << std::endl;	
     //simulator->SetTerrain(rigidterrain_file, Terrain::RIGID);
-	simulator->SetSimulationLength(4.0);
+	simulator->SetSimulationLength(2.0);
 	simulator->SetTimeStep(4e-3);
 	simulator->SetCSV(true);
-	simulator->RunSimulation(driver_file, data);
+	simulator->RunSyncedSimulation(driver_file, data);
 
 	return 0;
 }

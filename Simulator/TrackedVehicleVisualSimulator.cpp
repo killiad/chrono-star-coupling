@@ -143,7 +143,7 @@ void TrackedVehicleVisualSimulator::RunSimulation(const std::string& driver_file
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if((!GetTime()) == 0.0 && model_initialized){
+    if(!model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChIrrGuiDriver>(*app);
         double render_step_size = 1.0 / 50;
@@ -178,7 +178,7 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if((!GetTime()) == 0.0 && model_initialized){
+    if(!model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChIrrGuiDriver>(*app);
         double render_step_size = 1.0 / 50;
@@ -220,8 +220,10 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
             moment = reader.GetVector();
             vehicleCreator->AddForce(part, spec_id, force, time_passed);
             vehicleCreator->AddTorque(part, spec_id, moment, time_passed);
+            reader.GetLine();
         }
         DoStep(vec);
+        reader.Close();
     }
 }
 

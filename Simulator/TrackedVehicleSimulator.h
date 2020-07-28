@@ -27,8 +27,6 @@ namespace vehicle{
 
 enum class Terrain { RIGID, SCM_DEFORMABLE };
 
-enum class SolverTypes { PSOR, PARALLEL_NCS, PARALLEL_SMC };
-
 class TrackedVehicleSimulator {
 
 	public:
@@ -73,13 +71,13 @@ class TrackedVehicleSimulator {
 		inline double GetTimeStep() const { return step_size; }
 
 		//Returns if simulation will export CSV files
-		inline bool getExportCSV() const { return makeCSV; }
+		inline bool GetExportCSV() const { return makeCSV; }
 
 		//Returns how much time has passed in the simulaiton
 		inline double GetTime() const { return time_passed; }
 
 		//Returns how many simulation frames has passed
-		inline int getFrameCount() const { return frameCount; }
+		inline int GetFrameCount() const { return frameCount; }
 
         //INPUT: file that contains information on steering, throttle, and breaking, and parts whose data
         //will be exported
