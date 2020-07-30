@@ -51,6 +51,13 @@ class CSVWriter
   		output.close();
   	}
 
+    //Opens a file stream
+    inline void Open(std::string filename)
+    {
+        output.open(filename);
+        file_name = filename;
+    }
+
     //Adds a value to the cell. Does not automatically add a comma.
     //If one wishes to add a comma, one can just pass a comma in on
     //the end of the parameter if it is a string or one can use AddComma()

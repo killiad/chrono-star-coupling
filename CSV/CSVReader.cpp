@@ -57,10 +57,6 @@ std::string CSVReader::GetString(){
 
 bool CSVReader::Open(const std::string filename){
     
-    if(input.is_open()){
-        Close();
-    }
-    
     input.open(filename, std::ios::in);
     if(input.is_open()){
         GetLine();
@@ -72,11 +68,9 @@ bool CSVReader::Open(const std::string filename){
 }
 
 void CSVReader::Close(){
-    if(input.is_open()){
-        input.close();
-        cursor = 0;
-        *processed = 0;    
-    }
+    input.close();
+    cursor = 0;
+    *processed = 0;    
 }
 
 ChVector<> CSVReader::GetVector(){
