@@ -200,7 +200,7 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
         if(time_passed >= tend){
             return;
         }
-        if(frameCount % file_ratio == 0){ 
+        if(frameCount % file_ratio == 1){ 
             sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
             data_file = filename;
         }
