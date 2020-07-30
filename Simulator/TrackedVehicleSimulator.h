@@ -9,7 +9,6 @@
 
 #include "../Creator/TrackedVehicleCreator.h"
 #include "../CSV/CSVReader.h"
-#include "../CSV/CSVMaker.h"
 
 #include <filesystem>
 #include "cstdio"
@@ -88,8 +87,10 @@ class TrackedVehicleSimulator {
         //will be exported
         //Run the simulation, exporting info into a CSV file automatically. Note that this function has no possibility for
         //not printing info into CSV files, so SetExportCSV() is irrelevent. This function will run with syncronosouly 
-        //with STAR-CCM+, and use CSV files for communication.
-        virtual void RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &parts_list = std::vector<Parts>()) = 0;
+        //with STAR-CCM+, and use CSV files for communication. The user will also pass in how to look for a new file. By default
+        //this value is one, if set to 2, for example, the program will look for a new file to sync with at every other time step.
+        virtual void RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &parts_list = std::vector<Parts>(),
+                const int file_ratio = 1) = 0;
 
 		//Must be called before DoTimeStep. This will set everything up for the simulation.
 		//INPUT: file that will tell vehicle when to steer, throttle, and break

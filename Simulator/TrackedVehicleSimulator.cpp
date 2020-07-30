@@ -6,7 +6,7 @@ namespace vehicle{
 
 
 TrackedVehicleSimulator::TrackedVehicleSimulator(std::shared_ptr<TrackedVehicleCreator> userVehicle) : 
-    vehicleCreator(userVehicle), vehicle(userVehicle->GetVehicle()), tend(10.0), step_size(4e-3), 
+    vehicleCreator(userVehicle), vehicle(userVehicle->GetVehicle()), tend(10.0), step_size(1e-3), 
     makeCSV(false), time_passed(0.0), terrain_exists(false), sim_initialized(false), 
     model_initialized(false), frameCount(0){}
 
@@ -60,9 +60,17 @@ void TrackedVehicleSimulator::InitializeModel(){
     vehicle->GetChassis()->SetFixed(true);
     SetCSV(false);
 
-    while(time_passed < 0.02){
-        std::cout << "INITIALIZING MODEL: NOT ACTUAL SIMULATION" << std::endl;
-        DoStep();
+    if(vehicleCreator->IsParallel()){
+        while(time_passed < 0.50){
+            std::cout << "INITIALIZING MODEL: NOT ACTUAL SIMULATION" << std::endl;
+            DoStep();
+        }
+    }
+    else{
+        while(time_passed < 0.02){
+            std::cout << "INITIALIZING MODEL: NOT ACTUAL SIMULATION" << std::endl;
+            DoStep();
+        }
     }
     
     vehicle->GetChassis()->SetFixed(fixed);

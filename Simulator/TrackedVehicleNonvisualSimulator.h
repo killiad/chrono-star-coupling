@@ -18,7 +18,8 @@ class TrackedVehicleNonVisualSimulator : public TrackedVehicleSimulator {
 
 		virtual void RunSimulation(const std::string& driver_file, const std::vector<Parts> &parts_list = std::vector<Parts>()) override;
 		
-        virtual void RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &parts_list = std::vector<Parts>()) override;
+        virtual void RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &parts_list = std::vector<Parts>(),
+                const int file_ratio = 1) override;
 
 	private:
 

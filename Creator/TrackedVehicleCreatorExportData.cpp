@@ -160,7 +160,7 @@ void TrackedVehicleCreator::ExportData(const std::vector<Parts>& part_list) cons
 void TrackedVehicleCreator::ExportData(const std::vector<Parts> &part_list, std::string &filename) const {
     
     //Labeling columns in first row of CSV file
-    CSVMaker csv(filename);
+    CSVWriter csv(filename);
     int gen_ID = 0;
     int spec_id = 0;
     std::shared_ptr<ChBody> body;

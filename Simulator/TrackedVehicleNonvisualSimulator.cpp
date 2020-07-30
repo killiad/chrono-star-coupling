@@ -115,13 +115,15 @@ void TrackedVehicleNonVisualSimulator::RunSimulation(const std::string& driver_f
     }
 }
 
-void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &vec) {
+void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &vec,
+        const int file_ratio) {
    
     char filename[100];
     int spec_id;
     ChVector<> force;
     ChVector<> moment;
     Parts part;
+    std::string data_file;
 
 
     if(!sim_initialized){
@@ -136,12 +138,15 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
     DoStep(vec);
     while(time_passed < tend){
         
-        sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
-        std::string data_file(filename);
-        std::cout << filename << std::endl;
+        if(frameCount % file_ratio == 0){
+            sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
+            data_file = filename;
+            std::cout << filename << std::endl;
+        }
         CSVReader reader(data_file);
         
         while(!reader.Open(filename)){
+            std::cout << "Waiting for file: " << data_file << std::endl;
             sleep(1);
         }
 
@@ -151,10 +156,7 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
 
         reader.GetLine(); 
         while(reader.IsValidRow()){
-            std::cout << reader.GetRow() << std::endl;
-            double id;
-            id = reader.GetNumber();
-            part = vehicleCreator->ID_To_Part(id);
+            part = vehicleCreator->ID_To_Part(reader.GetNumber());
             spec_id = reader.GetNumber();
             force = reader.GetVector();
             moment = reader.GetVector();

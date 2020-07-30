@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     data.push_back(Parts::ROADWHEEL_RIGHT);
 
     //Initializing Vehicle Creator and Simulator
-	auto runningGear = chrono_types::make_shared<TrackedVehicleCreator>(vehicle_file, ChContactMethod::NSC, true);
+	auto runningGear = chrono_types::make_shared<TrackedVehicleCreator>(vehicle_file, ChContactMethod::NSC, false);
     ChVector<> chassisPos(0,0,1.2);
     ChQuaternion<> chassisOrientation = QUNIT; 
     runningGear->Initialize(chassisPos, chassisOrientation, 0.0);
@@ -39,13 +39,12 @@ int main(int argc, char* argv[]) {
     
 	runningGear->SetPowertrain(simplepowertrain_file);
     runningGear->SetSolver(2);
-	runningGear->RestrictDOF(true, true, true, true, false, true);
-    std::cout << "Mass: " << runningGear->GetVehicleInfo().Mass << std::endl;	
+	runningGear->RestrictDOF(true, true, true, true, true, true);
     //simulator->SetTerrain(rigidterrain_file, Terrain::RIGID);
 	simulator->SetSimulationLength(2.0);
 	simulator->SetTimeStep(4e-3);
 	simulator->SetCSV(true);
-	simulator->RunSyncedSimulation(driver_file, data);
+	simulator->RunSyncedSimulation(driver_file, data, 3);
 
 	return 0;
 }

@@ -166,14 +166,15 @@ void TrackedVehicleVisualSimulator::RunSimulation(const std::string& driver_file
     }
 }
 
-void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &vec) {
+void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& driver_file, const std::vector<Parts> &vec,
+        const int file_ratio) {
    
     char filename[100];
     int spec_id;
     ChVector<> force;
     ChVector<> moment;
     Parts part;
-
+    std::string data_file;
 
     if(!sim_initialized){
         InitializeSimulation(driver_file);
@@ -199,9 +200,10 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
         if(time_passed >= tend){
             return;
         }
-        
-        sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
-        std::string data_file(filename);
+        if(frameCount % file_ratio == 0){ 
+            sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
+            data_file = filename;
+        }
         CSVReader reader(data_file);
         
         while(!reader.Open(filename)){

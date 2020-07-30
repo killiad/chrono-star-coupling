@@ -19,7 +19,7 @@
 #include "chrono_vehicle/tracked_vehicle/vehicle/TrackedVehicle.h"
 #include "chrono_thirdparty/filesystem/path.h"
 
-#include "../CSV/CSVMaker.h"
+#include "../CSV/CSVWriter.h"
 #include "../CSV/CSVReader.h"
 
 
