@@ -125,7 +125,7 @@ endif()
 # files in your project. 
 #--------------------------------------------------------------
 
-add_executable(myexe main.cpp Creator/TrackedVehicleCreator.cpp Creator/TrackedVehicleCreatorExportData.cpp Creator/TrackedVehicleCreatorForces.cpp Simulator/TrackedVehicleSimulator.cpp Simulator/TrackedVehicleVisualSimulator.cpp Simulator/TrackedVehicleNonvisualSimulator.cpp CSV/CSVReader.cpp CSV/CSVMaker.cpp)
+add_executable(myexe main.cpp Creator/TrackedVehicleCreator.cpp Creator/TrackedVehicleCreatorExportData.cpp Creator/TrackedVehicleCreatorForces.cpp Simulator/TrackedVehicleSimulator.cpp Simulator/TrackedVehicleVisualSimulator.cpp Simulator/TrackedVehicleNonvisualSimulator.cpp CSV/CSVReader.cpp CSV/CSVWriter.cpp)
 
 #--------------------------------------------------------------
 # Set properties for your executable target
