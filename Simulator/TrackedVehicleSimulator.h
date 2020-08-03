@@ -24,8 +24,6 @@
 namespace chrono{
 namespace vehicle{
 
-enum class Terrain { RIGID, SCM_DEFORMABLE };
-
 class TrackedVehicleSimulator {
 
 	public:
@@ -45,7 +43,7 @@ class TrackedVehicleSimulator {
 
 		//INPUT: file to generate terrain (JSON if Rigid, mesh if SCM_Deformable), terrain type based off enum above
 		//Sets a terrain
-		void SetTerrain(const std::string& filename, Terrain type);
+		//void SetTerrain(const std::string& filename, Terrain type);
 
 		//INPUT: Time, in seconds, on how long the simulation will last
 		//Sets how long the simulation will run, in seconds

@@ -138,14 +138,13 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
     DoStep(vec);
     while(time_passed < tend){
         
-        if(frameCount % file_ratio == 1){
+        if(frameCount % file_ratio == 1 || file_ratio == 1){
             sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
             data_file = filename;
-            std::cout << filename << std::endl;
         }
         CSVReader reader(data_file);
         
-        while(!reader.Open(filename)){
+        while(!reader.Open(data_file)){
             std::cout << "Waiting for file: " << data_file << std::endl;
             sleep(1);
         }

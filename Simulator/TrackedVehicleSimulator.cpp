@@ -10,7 +10,7 @@ TrackedVehicleSimulator::TrackedVehicleSimulator(std::shared_ptr<TrackedVehicleC
     makeCSV(false), time_passed(0.0), terrain_exists(false), sim_initialized(false), 
     model_initialized(false), frameCount(0){}
 
-void TrackedVehicleSimulator::SetTerrain(const std::string& filename, Terrain type){
+/*void TrackedVehicleSimulator::SetTerrain(const std::string& filename, Terrain type){
 
     switch(type){
         
@@ -27,7 +27,7 @@ void TrackedVehicleSimulator::SetTerrain(const std::string& filename, Terrain ty
             break;
 
     }
-}
+}*/
 
 void TrackedVehicleSimulator::SetSimulationLength(double seconds){
     tend = seconds;
@@ -61,7 +61,7 @@ void TrackedVehicleSimulator::InitializeModel(){
     SetCSV(false);
 
     if(vehicleCreator->IsParallel()){
-        while(time_passed < 0.50){
+        while(time_passed < 0.5){
             std::cout << "INITIALIZING MODEL: NOT ACTUAL SIMULATION" << std::endl;
             DoStep();
         }

@@ -57,10 +57,12 @@ std::string CSVReader::GetString(){
 
 bool CSVReader::Open(const std::string filename){
     
+    if(input.is_open()){
+        input.close();
+    }
     input.open(filename, std::ios::in);
     if(input.is_open()){
         GetLine();
-        cursor = 0;
         return true;
     }
     
