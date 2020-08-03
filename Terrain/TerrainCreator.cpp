@@ -25,7 +25,7 @@ TerrainCreator::TerrainCreator(std::shared_ptr<ChTrackedVehicle> veh, TerrainTyp
 }
 
 void TerrainCreator::InitializeRigid(){
-    terrain = chrono_types::make_shared<RigidTerrain>(vehicle->GetSystem(), file);
+    terrain = chrono_types::make_shared<RigidTerrain>(vehicle->GetSystem(), GetDataFile(file));
     std::dynamic_pointer_cast<RigidTerrain>(terrain)->Initialize();
 }
 
