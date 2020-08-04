@@ -43,7 +43,7 @@ void TrackedVehicleSimulator::InitializeModel(){
     SetCSV(false);
 
     if(vehicleCreator->IsParallel()){
-        while(vehicle->GetChTime() < 0.01){
+        while(vehicle->GetChTime() < 1.0){
             std::cout << "INITIALIZING MODEL: NOT ACTUAL SIMULATION" << std::endl;
             DoStep();
         }
