@@ -28,7 +28,7 @@ double CSVReader::GetNumber(){
     if(cursor == row.size() + 1){
         GetLine();
     }
-    if(!IsValidRow()){
+    if(!IsValidRow()){ //get rid of?
         return -1;
     }
     

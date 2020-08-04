@@ -7,7 +7,6 @@ TrackedVehicleNonVisualSimulator::TrackedVehicleNonVisualSimulator(std::shared_p
 
 void TrackedVehicleNonVisualSimulator::InitializeSimulation(const std::string& driver_file) {
 
-    time_passed = vehicle->GetSystem()->GetChTime();
     driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
     driver->Initialize();
 
@@ -58,11 +57,10 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
     vehicle->GetTrackShoeStates(RIGHT, shoe_states_right);
 
     // Update modules (process inputs from other modules)
-    time_passed = vehicle->GetSystem()->GetChTime();
-    driver->Synchronize(time_passed);
-    vehicle->Synchronize(time_passed, driver_inputs, shoe_forces_left, shoe_forces_right);
+    driver->Synchronize(vehicle->GetChTime());
+    vehicle->Synchronize(vehicle->GetChTime(), driver_inputs, shoe_forces_left, shoe_forces_right);
     if(terrain_exists){
-        terrain->Synchronize(time_passed);
+        terrain->Synchronize(vehicle->GetChTime());
     }
    
     // Advance simulation for one timestep for all modules
@@ -75,7 +73,7 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
  
     // Output data for STAR-CCM+
     if(makeCSV && model_initialized){
-        sprintf(filename, "%s/chrono_to_star_%.3f.csv", csv_dir.c_str(), time_passed);
+        sprintf(filename, "%s/chrono_to_star_%.3f.csv", csv_dir.c_str(), vehicle->GetChTime());
         std::string fn(filename);
         vehicleCreator->ExportData(parts_list, fn);
     }
@@ -83,9 +81,9 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
         vehicleCreator->ExportData(parts_list);
     }
 
-    std::cout << "Sim frame:      " << frameCount << std::endl;
-    std::cout << "Time:           " << time_passed << std::endl;
-    std::cout << "   throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
+    std::cout << "Sim frame:       " << frameCount << std::endl;
+    std::cout << "Time after step: " << vehicle->GetChTime() << std::endl;
+    std::cout << "   Throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
               << "   braking:  " << driver->GetBraking() << std::endl;
     std::cout << "Vehicle position: " << vehicle->GetVehiclePos() << std::endl;
     std::cout << "Vehicle rotation: " << vehicle->GetVehicleRot() << std::endl;
@@ -110,7 +108,7 @@ void TrackedVehicleNonVisualSimulator::RunSimulation(const std::string& driver_f
         model_initialized = true;
     }
 
-    while (time_passed < tend) {
+    while (vehicle->GetChTime() < tend) {
         DoStep(vec);
     }
 }
@@ -136,14 +134,15 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
     }
     
     DoStep(vec);
-    while(time_passed < tend){
+    while(vehicle->GetChTime() < tend){
         
         if(frameCount % file_ratio == 1 || file_ratio == 1){
-            sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
+            sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", vehicle->GetChTime());
             data_file = filename;
         }
         CSVReader reader(data_file);
         
+        std::cout << "Searching for file: " << data_file << std::endl;
         while(!reader.Open(data_file)){
             std::cout << "Waiting for file: " << data_file << std::endl;
             sleep(1);
@@ -159,8 +158,8 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
             spec_id = reader.GetNumber();
             force = reader.GetVector();
             moment = reader.GetVector();
-            vehicleCreator->AddForce(part, spec_id, force, time_passed);
-            vehicleCreator->AddTorque(part, spec_id, moment, time_passed);
+            vehicleCreator->AddForce(part, spec_id, force, vehicle->GetChTime());
+            vehicleCreator->AddTorque(part, spec_id, moment, vehicle->GetChTime());
             reader.GetLine();
         }
         DoStep(vec);

@@ -107,11 +107,10 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
     vehicle->GetTrackShoeStates(RIGHT, shoe_states_right);
 
     // Update modules (process inputs from other modules)
-    time_passed = vehicle->GetSystem()->GetChTime();
-    driver->Synchronize(time_passed);
-    vehicle->Synchronize(time_passed, driver_inputs, shoe_forces_left, shoe_forces_right);
+    driver->Synchronize(vehicle->GetChTime());
+    vehicle->Synchronize(vehicle->GetChTime(), driver_inputs, shoe_forces_left, shoe_forces_right);
     if(terrain_exists){
-        terrain->Synchronize(time_passed);
+        terrain->Synchronize(vehicle->GetChTime());
     }
     app->Synchronize("", driver_inputs);
 
@@ -125,7 +124,7 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
     vehicle->GetSystem()->DoStepDynamics(step_size);
 
     if(makeCSV && model_initialized){
-        sprintf(filename, "%s/chrono_to_star_%.3f.csv", csv_dir.c_str(), time_passed);
+        sprintf(filename, "%s/chrono_to_star_%.3f.csv", csv_dir.c_str(), vehicle->GetChTime());
         std::string fn(filename);
         vehicleCreator->ExportData(parts_list, fn);
     }
@@ -197,11 +196,11 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
     DoStep(vec);
     while(app->GetDevice()->run()){
 
-        if(time_passed >= tend){
+        if(vehicle->GetChTime() >= tend){
             return;
         }
         if(frameCount % file_ratio == 1 || file_ratio == 1){ 
-            sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", time_passed);
+            sprintf(filename, "../Inputs/star_to_chrono_%.3f.csv", vehicle->GetChTime());
             data_file = filename;
         }
         CSVReader reader(data_file);
@@ -220,8 +219,8 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
             spec_id = reader.GetNumber();
             force = reader.GetVector();
             moment = reader.GetVector();
-            vehicleCreator->AddForce(part, spec_id, force, time_passed);
-            vehicleCreator->AddTorque(part, spec_id, moment, time_passed);
+            vehicleCreator->AddForce(part, spec_id, force, vehicle->GetChTime());
+            vehicleCreator->AddTorque(part, spec_id, moment, vehicle->GetChTime());
             reader.GetLine();
         }
         DoStep(vec);

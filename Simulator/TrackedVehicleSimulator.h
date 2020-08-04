@@ -71,7 +71,7 @@ class TrackedVehicleSimulator {
 		inline bool GetExportCSV() const { return makeCSV; }
 
 		//Returns how much time has passed in the simulaiton
-		inline double GetTime() const { return time_passed; }
+		inline double GetTime() const { return vehicle->GetChTime(); }
 
 		//Returns how many simulation frames has passed
 		inline int GetFrameCount() const { return frameCount; }
@@ -116,8 +116,6 @@ class TrackedVehicleSimulator {
 
 		double step_size;
 
-		double time_passed;
-		
 		bool makeCSV;
 
         bool sim_initialized;
