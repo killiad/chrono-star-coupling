@@ -1,4 +1,5 @@
 #include "TrackedVehicleNonvisualSimulator.h"
+#include <fstream>
 
 namespace chrono{
 namespace vehicle{
@@ -9,11 +10,6 @@ void TrackedVehicleNonVisualSimulator::InitializeSimulation(const std::string& d
 
     driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
     driver->Initialize();
-
-    auto camera = chrono_types::make_shared<ChCamera>();
-    camera->SetPosition(ChVector<>(0,-6,0));
-    camera->SetAimPoint(ChVector<>(0,0,0));
-    vehicle->GetChassisBody()->AddAsset(camera);
 
     // Inter-module communication data
     shoe_states_left = BodyStates(vehicle->GetNumTrackShoes(LEFT));
@@ -26,11 +22,7 @@ void TrackedVehicleNonVisualSimulator::InitializeSimulation(const std::string& d
         return;
     }
     if(!filesystem::create_directory("../Outputs/CSV")){
-        std::cout << "Error creating directory " << "Outputs/CSV" << std::endl;
-        return;
-    }
-    if(!filesystem::create_directory("../Outputs/POVRAY")){
-        std::cout << "Error creating directory " << "Outputs/POVRAY" << std::endl;
+        std::cout << "Error creating directory Outputs/CSV" << std::endl;
         return;
     }
     if(!filesystem::create_directory("../Inputs")){   
@@ -44,7 +36,6 @@ void TrackedVehicleNonVisualSimulator::InitializeSimulation(const std::string& d
 void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_list) {
 
     char filename[100];
-    std::string pov_dir("../Outputs/POVRAY");
     std::string csv_dir("../Outputs/CSV");
 
     // Collect output data from modules (for inter-module communication)
@@ -69,6 +60,7 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
     if(terrain_exists){
         terrain->Advance(step_size);
     }
+    //do I only want this if it is in parallel
     vehicle->GetSystem()->DoStepDynamics(step_size);
  
     // Output data for STAR-CCM+
@@ -81,13 +73,28 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
         vehicleCreator->ExportData(parts_list);
     }
 
-    std::cout << "Sim frame:       " << frameCount << std::endl;
-    std::cout << "Time after step: " << vehicle->GetChTime() << std::endl;
-    std::cout << "   Throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
-              << "   braking:  " << driver->GetBraking() << std::endl;
-    std::cout << "Vehicle position: " << vehicle->GetVehiclePos() << std::endl;
-    std::cout << "Vehicle rotation: " << vehicle->GetVehicleRot() << std::endl;
-    std::cout << std::endl;
+    //send to a log file (optional)
+    if(info_to_terminal){
+        std::cout << "Sim frame:       " << frameCount << std::endl;
+        std::cout << "Time after step: " << vehicle->GetChTime() << std::endl;
+        std::cout << "   Throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
+                  << "   braking:  " << driver->GetBraking() << std::endl;
+        std::cout << "Vehicle position: " << vehicle->GetVehiclePos() << std::endl;
+        std::cout << "Vehicle rotation: " << vehicle->GetVehicleRot() << std::endl;
+        std::cout << std::endl;
+    }
+    if(info_to_log && model_initialized){
+        std::ofstream log;
+        log.open("chrono_log.txt");
+        log << "Sim frame:       " << frameCount << "\n";
+        log << "Time after step: " << vehicle->GetChTime() << "\n";
+        log << "   Throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
+                  << "   braking:  " << driver->GetBraking() << "\n";
+        log << "Vehicle position: " << vehicle->GetVehiclePos() << "\n";
+        log << "Vehicle rotation: " << vehicle->GetVehicleRot() << "\n";
+        log << "\n";
+        log.close();
+    }
 
     // Increment frame number
     frameCount++;
@@ -99,13 +106,10 @@ void TrackedVehicleNonVisualSimulator::RunSimulation(const std::string& driver_f
     if(!sim_initialized){
         InitializeSimulation(driver_file);
     }
-    if(!model_initialized ){
+    if(!model_initialized){
         InitializeModel();
         driver = chrono_types::make_shared<ChDataDriver>(*vehicle, vehicle::GetDataFile(driver_file));
         driver->Initialize();
-    }
-    else{
-        model_initialized = true;
     }
 
     while (vehicle->GetChTime() < tend) {

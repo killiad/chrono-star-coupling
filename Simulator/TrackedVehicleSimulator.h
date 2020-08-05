@@ -10,7 +10,8 @@
 #include "../Creator/TrackedVehicleCreator.h"
 #include "../CSV/CSVReader.h"
 
-#include <filesystem>
+#include <experimental/filesystem>
+#include <fstream>
 #include "cstdio"
 
 // If Irrlicht support is available...
@@ -48,6 +49,8 @@ class TrackedVehicleSimulator {
 		//INPUT: Time, in seconds, on how long the simulation will last
 		//Sets how long the simulation will run, in seconds
 		void SetSimulationLength(double seconds);
+
+        void SetLogInfo(bool toTerminal, bool toLog);
 
         /*//INPUT: After how many frames the user wants to save the simulation and the prefix for the save file names
         //This will set how often the simulation will save
@@ -123,6 +126,10 @@ class TrackedVehicleSimulator {
         bool model_initialized;
 
 		bool terrain_exists;
+
+        bool info_to_terminal;
+
+        bool info_to_log;
 
 		int frameCount;
 

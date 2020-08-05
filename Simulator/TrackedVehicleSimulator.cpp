@@ -8,7 +8,7 @@ namespace vehicle{
 TrackedVehicleSimulator::TrackedVehicleSimulator(std::shared_ptr<TrackedVehicleCreator> userVehicle) : 
     vehicleCreator(userVehicle), vehicle(userVehicle->GetVehicle()), tend(10.0), step_size(1e-3), 
     makeCSV(false), terrain_exists(false), sim_initialized(false), 
-    model_initialized(false), frameCount(0){}
+    model_initialized(false), info_to_log(true), info_to_terminal(true), frameCount(0){}
 
 
 void TrackedVehicleSimulator::SetSimulationLength(double seconds){
@@ -32,6 +32,12 @@ void TrackedVehicleSimulator::SetTimeStep(double step) {
 //set true to export the csv files
 void TrackedVehicleSimulator::SetCSV(bool export_data) {
 	makeCSV = export_data;
+}
+
+void TrackedVehicleSimulator::SetLogInfo(bool toTerminal, bool toLog){
+    info_to_terminal = toTerminal;
+    info_to_log = toLog;
+    remove("chrono_log.txt");
 }
 
 void TrackedVehicleSimulator::InitializeModel(){

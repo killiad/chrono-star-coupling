@@ -117,10 +117,9 @@ void TrackedVehicleCreator::SetSolver(int threads) {
         int max_threads = CHOMPfunctions::GetNumProcs();
         if (threads > max_threads)
             threads = max_threads;
-        CHOMPfunctions::SetNumThreads(threads);
+        //CHOMPfunctions::SetNumThreads(threads);
+        casted_system->SetNumThreads(threads);
         std::cout << "Using " << threads << " threads" << std::endl;
-
-        casted_system->GetSettings()->perform_thread_tuning = thread_tuning;
 
         // Set solver parameters
         casted_system->GetSettings()->solver.max_iteration_bilateral = max_iteration_bilateral;

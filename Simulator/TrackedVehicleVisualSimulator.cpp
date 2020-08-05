@@ -18,23 +18,14 @@ void TrackedVehicleVisualSimulator::InitializeSimulation(const std::string& driv
         std::cout << "Error creating directory Outputs/CSV" << std::endl;
         return;
     }
-    if(!filesystem::create_directory("../Outputs/POVRAY")){
-        std::cout << "Error creating directory Outputs/POVRAY" << std::endl;
-        return;
-    }
 
     app = chrono_types::make_shared<ChTrackedVehicleIrrApp>(vehicle.get(), L"Tracked Vehicle Simulation");
 
     app->SetSkyBox();
     app->AddTypicalLights(irr::core::vector3df(30.f, -30.f, 100.f), irr::core::vector3df(30.f, 50.f, 100.f), 250, 130);
-    //app->SetChaseCamera(ChVector<>(0.0, 0.0, 0.0), 6.0, 0.5);
+    app->SetChaseCamera(ChVector<>(0.0, 0.0, 0.0), 6.0, 0.5);
 
     app->SetTimestep(step_size);
-    auto camera = chrono_types::make_shared<ChCamera>();
-    camera->SetPosition(ChVector<>(-3,0,3));
-    camera->SetAimPoint(ChVector<>(0,0,0));
-    vehicle->GetChassisBody()->AddAsset(camera);
-
     app->AssetBindAll();
     app->AssetUpdateAll();
 
@@ -57,18 +48,12 @@ void TrackedVehicleVisualSimulator::InitializeSimulation(const std::string& driv
     GetLog() << driver->GetInputModeAsString() << "\n";
 
     driver->Initialize();
-    // ---------------
-    // Simulation loop
-    // ---------------
 
     // Inter-module communication data
     shoe_states_left = BodyStates(vehicle->GetNumTrackShoes(LEFT));
     shoe_states_right = BodyStates(vehicle->GetNumTrackShoes(RIGHT));
     shoe_forces_left = TerrainForces(vehicle->GetNumTrackShoes(LEFT));
     shoe_forces_right = TerrainForces(vehicle->GetNumTrackShoes(RIGHT));
-
-    // Number of simulation steps between two 3D view render frames
-    int render_steps = (int)std::ceil(render_step_size / step_size);
 
     sim_initialized = true;
 }
@@ -78,7 +63,6 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
 
     // Output directories (Povray only)
     const std::string csv_dir = "Outputs/CSV";
-    const std::string pov_dir = "Outputs/POVRAY";
     char filename[100];
 
     // Render scene
@@ -132,6 +116,28 @@ void TrackedVehicleVisualSimulator::DoStep(const std::vector<Parts>& parts_list)
         vehicleCreator->ExportData(parts_list);
     }
 
+    if(info_to_terminal){
+        std::cout << "Sim frame:       " << frameCount << std::endl;
+        std::cout << "Time after step: " << vehicle->GetChTime() << std::endl;
+        std::cout << "   Throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
+                  << "   braking:  " << driver->GetBraking() << std::endl;
+        std::cout << "Vehicle position: " << vehicle->GetVehiclePos() << std::endl;
+        std::cout << "Vehicle rotation: " << vehicle->GetVehicleRot() << std::endl;
+        std::cout << std::endl;
+    }
+    if(info_to_log && model_initialized){
+        std::ofstream log;
+        log.open("chrono_log.txt");
+        log << "Sim frame:       " << frameCount << "\n";
+        log << "Time after step: " << vehicle->GetChTime() << "\n";
+        log << "   Throttle: " << driver->GetThrottle() << "   steering: " << driver->GetSteering()
+                  << "   braking:  " << driver->GetBraking() << "\n";
+        log << "Vehicle position: " << vehicle->GetVehiclePos() << "\n";
+        log << "Vehicle rotation: " << vehicle->GetVehicleRot() << "\n";
+        log << "\n";
+        log.close();
+    }
+
     // Spin in place for real time to catch up
     realtime_timer.Spin(step_size);
     ++frameCount;
@@ -159,7 +165,7 @@ void TrackedVehicleVisualSimulator::RunSimulation(const std::string& driver_file
 
     while (app->GetDevice()->run()) {
         DoStep();
-        if(realtime_timer.GetTimeSeconds() > tend){
+        if(realtime_timer.GetTimeSeconds() >= tend){
             return;
         }
     }
