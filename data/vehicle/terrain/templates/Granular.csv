@@ -1,0 +1,2 @@
+Contact Method (NSC or SMC),Static Sliding Friction Coefficient,Kinetic Sliding Friction Coefficient,Rolling Friction Coefficient,Spinning Friction Coefficient,Restitution,Collision Envelope,Minimum Number of Particles,Center x,Center y,Center z,Length,Width,Number of Layers,Radius,Density,Initial Velocity x,Initial Velocity Y,Initial Velocity Z
+NSC,0.6,0.5,0,0,0,0.05,0,0,0,0,1.75,0.75,3,0.01,1,0,0,0

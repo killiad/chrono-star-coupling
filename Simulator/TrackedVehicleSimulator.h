@@ -42,20 +42,16 @@ class TrackedVehicleSimulator {
 		//set true to export the csv files
 		void SetCSV(bool export_data);
 
-		//INPUT: file to generate terrain (JSON if Rigid, mesh if SCM_Deformable), terrain type based off enum above
-		//Sets a terrain
-		//void SetTerrain(const std::string& filename, Terrain type);
-
 		//INPUT: Time, in seconds, on how long the simulation will last
 		//Sets how long the simulation will run, in seconds
 		void SetSimulationLength(double seconds);
 
+        //Input true if you want step information outputed to the terminal or a log file
         void SetLogInfo(bool toTerminal, bool toLog);
 
-        /*//INPUT: After how many frames the user wants to save the simulation and the prefix for the save file names
-        //This will set how often the simulation will save
-        void SetSaveProperties(int interval, std::string file_prefix = "saved_data");*/
-		
+        //Set the terrain of the simulation, if terrain exists
+        void SetTerrain(std::shared_ptr<ChTerrain> sim_terrain);
+
         //This function will run a couple time steps with a fixed vehicle to ensure everything is properly initialized
         //before the actual simulation is ran.
         void InitializeModel();
@@ -112,9 +108,6 @@ class TrackedVehicleSimulator {
 
 		std::shared_ptr<ChIterativeSolverVI> solver;
 
-        //std::string prefix;
-
-		//length of simulation
 		double tend;
 
 		double step_size;
@@ -132,8 +125,6 @@ class TrackedVehicleSimulator {
         bool info_to_log;
 
 		int frameCount;
-
-        //int save_interval;
 
 		BodyStates shoe_states_left;
 

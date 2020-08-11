@@ -47,21 +47,26 @@ void TrackedVehicleNonVisualSimulator::DoStep(const std::vector<Parts> &parts_li
     vehicle->GetTrackShoeStates(LEFT, shoe_states_left);
     vehicle->GetTrackShoeStates(RIGHT, shoe_states_right);
 
+    std::cout << 1 << std::endl;
     // Update modules (process inputs from other modules)
     driver->Synchronize(vehicle->GetChTime());
     vehicle->Synchronize(vehicle->GetChTime(), driver_inputs, shoe_forces_left, shoe_forces_right);
     if(terrain_exists){
         terrain->Synchronize(vehicle->GetChTime());
     }
+    std::cout << 2 << std::endl;
    
     // Advance simulation for one timestep for all modules
     driver->Advance(step_size);
     vehicle->Advance(step_size);
     if(terrain_exists){
+        std::cout << 3 << std::endl;
         terrain->Advance(step_size);
+        std::cout << 4 << std::endl;
     }
     //do I only want this if it is in parallel
     vehicle->GetSystem()->DoStepDynamics(step_size);
+    std::cout << 5 << std::endl;
  
     // Output data for STAR-CCM+
     if(makeCSV && model_initialized){
@@ -151,6 +156,7 @@ void TrackedVehicleNonVisualSimulator::RunSyncedSimulation(const std::string& dr
             std::cout << "Waiting for file: " << data_file << std::endl;
             sleep(1);
         }
+        sleep(1);
 
         for(auto part_body : vec){
             vehicleCreator->ClearAddedForces(part_body);

@@ -33,6 +33,9 @@ class CSVReader{
         //decimal points
         bool IsValidRow();
 
+        //return true if and only if the stream is open
+        bool IsOpen();
+
         //Returns the number at the current cell, then moves the cursor to the next cell of data
         //Assumes ValidInput() = true
         double GetNumber();

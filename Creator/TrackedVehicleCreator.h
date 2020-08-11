@@ -54,21 +54,11 @@ class TrackedVehicleCreator {
         //parallel and sets the respective vehicle. 
 		TrackedVehicleCreator(const std::string& filename, ChContactMethod method = ChContactMethod::NSC, bool parallel = false); 
 		
-        //Constructor for loading simulation data from a previously saved simulation. Expects a CSV
-        //TrackedVehicleCreator(std::string save_file);
-
 		//Initialize the vehicle. Must be called if client wants default initialization overriden, but by default is called inthe constructor
 		void Initialize(const ChCoordsys<>& chassisPos = ChCoordsys<>(ChVector<>(0,0,1.2), QUNIT), const double chassisFwdVel = 0.0);
 
         //Same as above, but uses individual position and orientation data instead of just a coordinate system
         void Initialize(const ChVector<> position, const ChQuaternion<> orientation, const double chassisFwdVel = 0.0);
-
-        /*//This function will save data in CSV format to be read by the TrackedVehicleCreator's constructor
-        //if one wishes to stop the simulation then start again later.
-        void SaveData(std::string prefix, double time_passed) const;
-
-        //Called after calling the constructor that loads saved data ONLY
-        void LoadData();*/
 
 		//Set the powertrain. InputL JSON file
 		void SetPowertrain(const std::string& filename);

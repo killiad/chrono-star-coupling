@@ -58,44 +58,6 @@ TrackedVehicleCreator::TrackedVehicleCreator(const std::string& filename, ChCont
     info.Mass = vehicle->GetVehicleMass();
 }
 
-/*TrackedVehicleCreator::TrackedVehicleCreator(std::string save_file){
-    CSVReader csv(save_file);
-    saveFile = save_file;
-        
-    //First row data
-    master_file = csv.GetString();
-    powertrain_file = csv.GetString();
-    ChContactMethod method;
-    if(csv.GetString() == "NSC"){
-       method = ChContactMethod::NSC;
-    }
-    else{
-        method = ChContactMethod::SMC;
-    }
-    double sim_time = csv.GetNumber();
-    DOF[0] = csv.GetNumber();
-    DOF[1] = csv.GetNumber();
-    DOF[2] = csv.GetNumber();
-    DOF[3] = csv.GetNumber();
-    DOF[4] = csv.GetNumber();
-    DOF[5] = csv.GetNumber();
-    init_pos = ChVector<>(csv.GetNumber(), csv.GetNumber(), csv.GetNumber());
-    init_rot = ChQuaternion<> (csv.GetNumber(), csv.GetNumber(), csv.GetNumber(), csv.GetNumber());
-    init_Chassis_FwdVel = csv.GetNumber();
-
-    vehicle = chrono_types::make_shared<TrackedVehicle>(vehicle::GetDataFile(master_file), method);
-    vehicle->GetSystem()->SetChTime(sim_time);
-
-    auto left_assembly = vehicle->GetTrackAssembly(LEFT);
-    auto right_assembly = vehicle->GetTrackAssembly(RIGHT);
-    info.Left_TrackShoeNum = left_assembly->GetNumTrackShoes();
-    info.Right_TrackShoeNum = right_assembly->GetNumTrackShoes();
-    info.Left_RollerNum = left_assembly->GetNumRollers();
-    info.Right_RollerNum = right_assembly->GetNumRollers();
-    info.Left_RoadWheelNum = left_assembly->GetNumRoadWheelAssemblies();
-    info.Right_RoadWheelNum = right_assembly->GetNumRoadWheelAssemblies();
-    info.Mass = vehicle->GetVehicleMass();
-}*/
 
 void TrackedVehicleCreator::SetSolver(int threads) {
 
@@ -108,9 +70,6 @@ void TrackedVehicleCreator::SetSolver(int threads) {
     double tolerance = 0.01;
     double r_g = 0.02;
 
-    // Perform dynamic tuning of number of threads?
-    bool thread_tuning = false;
-    
     if(is_parallel){
         ChSystemParallel *casted_system = dynamic_cast<ChSystemParallel*>(vehicle->GetSystem());
         // Set number of threads

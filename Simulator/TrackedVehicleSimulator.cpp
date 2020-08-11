@@ -15,16 +15,6 @@ void TrackedVehicleSimulator::SetSimulationLength(double seconds){
     tend = seconds;
 }
 
-/*void TrackedVehicleSimulator::SetSaveProperties(int interval, std::string file_prefix){
-    save_interval = interval;
-    prefix = file_prefix;
-    if(!filesystem::create_directory("../Outputs/Saves")){
-        std::cout << "Error creating directory Outputs/Saves" << std::endl;
-        return;
-    }
-}*/
-
-
 void TrackedVehicleSimulator::SetTimeStep(double step) {
 	step_size = step;
 }
@@ -38,6 +28,11 @@ void TrackedVehicleSimulator::SetLogInfo(bool toTerminal, bool toLog){
     info_to_terminal = toTerminal;
     info_to_log = toLog;
     remove("chrono_log.txt");
+}
+
+void TrackedVehicleSimulator::SetTerrain(std::shared_ptr<ChTerrain> sim_terrain){
+    terrain = sim_terrain;
+    terrain_exists = true; 
 }
 
 void TrackedVehicleSimulator::InitializeModel(){

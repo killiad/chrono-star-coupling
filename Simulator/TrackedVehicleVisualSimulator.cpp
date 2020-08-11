@@ -214,6 +214,7 @@ void TrackedVehicleVisualSimulator::RunSyncedSimulation(const std::string& drive
         while(!reader.Open(filename)){
             sleep(1);
         }
+        sleep(1);
         
         for(auto part_body : vec){
             vehicleCreator->ClearAddedForces(part_body);

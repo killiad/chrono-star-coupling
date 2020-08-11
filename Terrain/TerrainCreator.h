@@ -3,35 +3,24 @@
 
 #include <memory>
 
-#include "chrono_vehicle/terrain/RigidTerrain.h"
-#include "chrono_vehicle/terrain/SCMDeformableTerrain.h"
-#include "chrono_vehicle/terrain/FlatTerrain.h"
-#include "chrono_vehicle/tracked_vehicle/ChTrackedVehicle.h"
+#include "chrono_vehicle/tracked_vehicle/vehicle/TrackedVehicle.h"
+#include "chrono_vehicle/ChTerrain.h"
+#include "chrono_vehicle/ChVehicleModelData.h"
 
 namespace chrono{
 namespace vehicle{
 
-enum class TerrainModel { RIGID, SCM_DEFORMABLE, FLAT };
-
 class TerrainCreator{
 
     public:
-        TerrainCreator(std::shared_ptr<ChTrackedVehicle> veh, TerrainModel type, std::string filename);
+        TerrainCreator(std::string filename, std::shared_ptr<TrackedVehicle> veh) : file(filename), vehicle(veh) {}
 
-        inline std::shared_ptr<ChTerrain> GetTerrain() { return terrain; }
+        virtual std::shared_ptr<ChTerrain> GetTerrain() = 0; 
 
-    private:
-        void InitializeRigid();
+        inline std::string GetTerrainFile() { return file; }
 
-        void InitializeSCMDeformable();
-
-        void InitializeFlat();
-
-        std::shared_ptr<ChTerrain> terrain;
-
-        std::shared_ptr<ChTrackedVehicle> vehicle;
-
-        TerrainModel terrain_model;
+    protected:
+        std::shared_ptr<TrackedVehicle> vehicle;
 
         std::string file;
 };

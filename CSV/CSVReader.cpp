@@ -5,6 +5,9 @@ namespace chrono{
 CSVReader::CSVReader(const std::string filename) {
     Open(filename);
     processed = new size_t(0);
+    if(!IsOpen()){
+        std::cout << "Opening failed: " << filename << std::endl;
+    }
 }
 
 CSVReader::~CSVReader(){
@@ -67,6 +70,10 @@ bool CSVReader::Open(const std::string filename){
     }
     
     return false;
+}
+
+bool CSVReader::IsOpen(){
+    return input.is_open();
 }
 
 void CSVReader::Close(){
